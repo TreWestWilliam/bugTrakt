@@ -1,0 +1,52 @@
+#salesOne {
+    padding-top:1%;
+    padding-bottom:2%;
+    text-align:center;
+    padding-left:5%;
+    padding-right:5%;
+   
+}
+#pricingContainer::after {
+  content: "";
+  clear: both;
+  display: table;
+}
+#pricingOne {
+    width:33.3%;
+    float:left;
+    border-radius:25px;   
+    
+}
+#minorPadding {
+    padding-left:.5%;
+    padding-right:.5%;
+}
+#pricingTwo {
+    border:2px;
+    border-style:groove;
+    border-radius:25px;
+    background-color:whitesmoke;
+    text-align:center;
+    padding-left:1%;
+    padding-right:1%;
+    overflow:auto;
+}
+#price {
+    color:darkgreen;
+    font-style: oblique;
+}
+#caution {
+    color:darkred;
+}
+#finePrint{
+    font-size:0.5vw;
+    color:darkred;
+    font-style:italic;
+}
+#pricingList {
+    list-style-type:none;
+    background-color:antiquewhite;
+}
+#altList{
+    background-color:palegreen;
+}
