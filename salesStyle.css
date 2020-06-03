@@ -6,15 +6,15 @@
     padding-right:5%;
    
 }
-#pricingContainer::after {
-  content: "";
-  clear: both;
-  display: table;
+#pricingContainer{
+    display:flex;
 }
 #pricingOne {
     width:33.3%;
     float:left;
     border-radius:25px;   
+    display:flex;
+    flex-direction:row;
     
 }
 #minorPadding {
