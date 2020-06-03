@@ -1,0 +1,13 @@
+#loginBox {
+    text-align:center;
+    width=33.3%;
+    margin-left:33.3%;
+    margin-right:33.3%;
+    margin-top:10%;
+    border-color:greenyellow;
+    border-radius: 25px;
+    border-width:2px;
+    border-style:solid;
+    padding-top:5%;
+    padding-bottom:5%;
+}

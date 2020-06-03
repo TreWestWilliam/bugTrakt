@@ -9,10 +9,10 @@
             </div>
             <div id="headRight">
             <ul id="HorizontalList">
-                <li>Home</li>
-                <li>About Us</li>
-                <li>Pricing</li>
-                <li>Auth</li>
+                <li><a href=http://localhost/BugTrakt/index.php>Home</a></li>
+                <li><a href="http://localhost/BugTrakt/about.php">About Us</a></li>
+                <li><a href="http://localhost/BugTrakt/sales.php">Pricing</a></li>
+                <li><a href="http://localhost/BugTrakt/auth/login.php">Log in</a></li>
                 </ul>
             </div>
         </div>

@@ -112,3 +112,11 @@ footer {
     bottom:0;
     left:0;
 }
+#inpsireOne {
+    background-color:black;
+    color:white;
+}
+#devNote {
+    background-color:yellow;
+    color:red;
+}
