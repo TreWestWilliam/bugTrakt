@@ -1,6 +1,3 @@
-<head>
-	<link rel="stylesheet" href="style.css">
-</head>
 <header>
         <nav>
         <div id="headTop">
@@ -9,10 +6,11 @@
             </div>
             <div id="headRight">
             <ul id="HorizontalList">
-                <li><a href=http://localhost/BugTrakt/tracker/index.php>Your Home</a></li>
-                <li><a href="http://localhost/BugTrakt/about.php">Ticket List</a></li>
-                <li><a href="http://localhost/BugTrakt/tracker/admin/index.php">Admin</a></li>
-                <li><a href="http://localhost/BugTrakt/auth/logout.php">Log out</a></li>
+                <a href=http://localhost/BugTrakt/tracker/index.php><li>Your Home</li></a>
+                <a href="http://localhost/BugTrakt/tracker/ticketlist.php"><li>Ticket List</li></a>
+                <a href="http://localhost/BugTrakt/tracker/newticket.php"><li>New Ticket</li></a>
+                <a href="http://localhost/BugTrakt/tracker/admin/index.php"><li>Admin</li></a>
+                <a href="http://localhost/BugTrakt/auth/logout.php"><li>Log out</li></a>
                 </ul>
             </div>
         </div>
