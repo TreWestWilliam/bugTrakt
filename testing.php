@@ -3,38 +3,36 @@
 
 <head>
 	<meta charset="utf-8">
-	<title>BugTrakt Tracker</title>
+	<title>BugTrakt Pricing</title>
 	<meta name="author" content="William West">
 	<meta name="description" content="A simple web bug tracker">
 	<meta name="viewport" content="width=device-width, initial-scale=1.0">
-	<link rel="stylesheet" href="../../style.css">
-    <link rel="stylesheet" href="adminStyle.css">
+	<link rel="stylesheet" href="style.css">
+    <link rel="stylesheet" href="salesStyle.css">
 	<link rel="icon" type="image/x-icon" href=""/>
 </head>
 
 <body>
 <?php 
     //calling our header
-        chdir("..");
     echo file_get_contents("head.php");
     ?>
     
 	<main>
-        <?php
-        chdir("admin");
-        echo file_get_contents("adminBar.php");
-        chdir("..");
-        ?>
-        <div id="adminRight">
-        <h1>Settings</h1>
-            <h2>Personal Settings</h2>
-            <h2>Project Settings</h2>
-            <h2>Assignment Settings</h2>
+        <!--Starting with a big bold beautiful heading.-->
+        <div id="salesOne">
+            <h1 id="salesOne">Testing information.</h1>
+            <p>If you want to try us out first, please use this login. <br>
+            Username:Test <br>
+            Password:Tester<br>
+            If you need any more extensive testing please call our support team at support@email.com.
+            </p>
         </div>
+            
+
     </main>
     <?php 
     //calling our footer
-    chdir("..");
     echo file_get_contents("foot.php");
     ?>
     

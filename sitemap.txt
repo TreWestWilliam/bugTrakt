@@ -1,0 +1,14 @@
+http://localhost/BugTrakt/
+http://localhost/BugTrakt/index.php
+http://localhost/BugTrakt/tracker/index.php
+http://localhost/BugTrakt/about.php
+http://localhost/BugTrakt/sales.php
+http://localhost/BugTrakt/tracker/newticket.php
+http://localhost/BugTrakt/tracker/admin/index.php
+http://localhost/BugTrakt/tracker/ticketlist.php
+http://localhost/BugTrakt/auth/login.php
+http://localhost/BugTrakt/tracker/admin/logs.php
+http://localhost/BugTrakt/tracker/admin/stats.php
+http://localhost/BugTrakt/tracker/admin/users.php
+http://localhost/BugTrakt/auth/recoverPassword.php
+http://localhost/BugTrakt/auth/signup.php
