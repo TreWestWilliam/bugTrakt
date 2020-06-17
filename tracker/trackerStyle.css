@@ -51,6 +51,68 @@ html {
     padding-left:33.3%;
     padding-right:33.3%;
 }
+/*Decided to give the tickets themselves more room for content and discussion */
+#centeredBodyQ {
+    padding-left:25%;
+    padding-right:25%;
+}
+#ticketBody {
+    background-color:white;
+    border-color:lightgray;
+    border-style:solid;
+    border-width: 2px;
+    /*border-radius:10px;*/
+    border-top-width:0;
+    border-bottom-width:0;
+    transition: background-color .5s,border-color 1s;
+    text-align:left;
+    padding:1%;
+    padding-left:2%;
+    padding-right:2%;
+    margin:1%;
+    margin-top:0;
+    position:fixed;
+    height:100%;
+    overflow:auto;
+    width:50%;
+}
+
+#ticketItemContainer {
+    padding-bottom:1.5%;
+    border-bottom-width:1px;
+    border-bottom-style:solid;
+    border-color:black;
+    margin-bottom:1%;
+}
+
+#ticketInfo {
+    color:grey;
+    font-size:0.75vw;
+    width:75%;
+    float:left;
+}
+#ticketControl {
+    width:25%;
+    float:right;
+    align-content: right;
+    text-align:right;
+}
+#ticketComment {
+    margin-left:1%;
+    padding-left:1%;
+    border-left-style:solid;
+    border-color:grey;
+    border-left-width:2px;
+    margin-bottom:1%;
+}
+#commentReply {
+    margin-left:1%;
+    padding-left:.5%;
+    border-width:0;
+    border-left-width:2px;
+    border-style:solid;
+    border-color:grey;
+}
 #thirdsLeft {
     text-align:left;
     float:left;
@@ -64,4 +126,8 @@ html {
     text-align:right;
     float:right;
     width:33.3%;
+}
+#ticketControl img {
+    width:7%;
+    height:auto;
 }

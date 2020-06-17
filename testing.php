@@ -23,8 +23,8 @@
         <div id="salesOne">
             <h1 id="salesOne">Testing information.</h1>
             <p>If you want to try us out first, please use this login. <br>
-            Username:Test <br>
-            Password:Tester<br>
+            Username:TestAccount <br>
+            Password:Test<br>
             If you need any more extensive testing please call our support team at support@email.com.
             </p>
         </div>

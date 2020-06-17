@@ -1,3 +1,15 @@
+<?php 
+    //In this page we have our redirect to the login since it's on every page
+    // Initialize the session
+    session_start();
+
+    // Check if the user is logged in, if not then redirect him to login page
+    if(!isset($_SESSION["loggedin"]) || $_SESSION["loggedin"] !== true){
+        header("location: ../auth/login.php");
+        exit;
+    }
+?>
+
 <header>
         <nav>
         <div id="headTop">
