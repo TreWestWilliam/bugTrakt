@@ -21,6 +21,7 @@
     
 	<main>
         <?php
+        session_start();
         chdir("admin");
         echo file_get_contents("adminBar.php");
         chdir("..");
@@ -30,6 +31,13 @@
             <h2>Personal Settings</h2>
             <h2>Project Settings</h2>
             <h2>Assignment Settings</h2>
+            <h2>Session Data</h2>
+            <?php 
+                foreach ($_SESSION as $OBJECT) 
+                {
+                 echo "<p>$OBJECT</p><br>";   
+                }
+            ?>
         </div>
     </main>
     <?php 

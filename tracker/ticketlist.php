@@ -22,14 +22,14 @@
         <div id="centeredBody">
             <h1 id="alignCenter">Tickets</h1>
             <p>Fitler/Search:</p>
-            <form method="get" action="">
+            <form method="post" action="">
             Search: <input type="text" name="search"> <br>
             Active: <select id="active" name="isactive">
                 <option value="either">Either</option>
                 <option value="curactive">Open</option>
                 <option value="inactive">Closed</option>
                 </select><br>
-                Ammount: <select id="pages" name="pages">
+                Amount: <select id="pages" name="pages">
                 <option value="ten">10/page</option>
                 <option value="five">5/page</option>
                 <option value="fifteen">15/page</option>
@@ -43,49 +43,63 @@
                 <option value="Medium">Medium</option>
                 <option value="Low">Low</option>
                 </select><br>
+                Difficulty: <select id="difficulty" name="difficulty">
+                <option value="any">Any</option>
+                <option value="High">High</option>
+                <option value="Medium">Medium</option>
+                <option value="Low">Low</option>
+                </select><br>
                 <input type="submit">
             </form>
             <div id="ticketContainer">
-                <div id="yourTicket">
+                <?php 
+                require_once"mysqlConfig.php";
+                
+                $results = $mysqli->query("SELECT * FROM `ticket` WHERE `PID` = 1");
+                
+                while($ticket = $results->fetch_assoc()) 
+                {
+                    $TicketID = $ticket["TID"];
+                    $TicketName = $ticket["TITLE"];
+                    $CreatedUserName=getUserNameFromID($ticket["UID"]);
+                    $dateTimeCreated=$ticket["CREATED"];
+                    $DIFFICULTY =$ticket["DIFFICULTY"];
+                    $PRIORITY = $ticket["PRIORITY"];
+                    
+                    if ($PRIORITY == 0) 
+                    {
+                        $PriorityText="Low";
+                    }
+                    else if ($PRIORITY == 1) 
+                    {
+                        $PriorityText="Medium";
+                    }
+                    else  
+                    {
+                        $PriorityText="High";
+                    }
+                    
+                    if ($DIFFICULTY == 0) 
+                    {
+                        $DifficultyText="Low";
+                    }
+                    else if ($DIFFICULTY == 1) 
+                    {
+                        $DifficultyText="Medium";
+                    }
+                    else  
+                    {
+                        $DifficultyText="High";
+                    }
+                    
+                    
+                echo "<a href=ticket.php?tid=$TicketID><div id=yourTicket>
                 <h2>$TicketID | $TicketName</h2>
-                    <p>Created by: $Created_User_name Created on:$dateTime_created</p>
-                </div>
-                <div id="yourTicket">
-                <h2>$TicketID | $TicketName</h2>
-                    <p>Created by: $Created_User_name Created on:$dateTime_created</p>
-                </div>
-                <div id="yourTicket">
-                <h2>$TicketID | $TicketName</h2>
-                    <p>Created by: $Created_User_name Created on:$dateTime_created</p>
-                </div>
-                <div id="yourTicket">
-                <h2>$TicketID | $TicketName</h2>
-                    <p>Created by: $Created_User_name Created on:$dateTime_created</p>
-                </div>
-                <div id="yourTicket">
-                <h2>$TicketID | $TicketName</h2>
-                    <p>Created by: $Created_User_name Created on:$dateTime_created</p>
-                </div>
-                <div id="yourTicket">
-                <h2>$TicketID | $TicketName</h2>
-                    <p>Created by: $Created_User_name Created on:$dateTime_created</p>
-                </div>
-                <div id="yourTicket">
-                <h2>$TicketID | $TicketName</h2>
-                    <p>Created by: $Created_User_name Created on:$dateTime_created</p>
-                </div>
-                <div id="yourTicket">
-                <h2>$TicketID | $TicketName</h2>
-                    <p>Created by: $Created_User_name Created on:$dateTime_created</p>
-                </div>
-                <div id="yourTicket">
-                <h2>$TicketID | $TicketName</h2>
-                    <p>Created by: $Created_User_name Created on:$dateTime_created</p>
-                </div>
-                <div id="yourTicket">
-                <h2>$TicketID | $TicketName</h2>
-                    <p>Created by: $Created_User_name Created on:$dateTime_created</p>
-                </div>
+                    <p>Created by: $CreatedUserName Created on:$dateTimeCreated</p>
+                    <p>Difficulty: $DifficultyText Priority: $PriorityText</p>
+                </div></a>";
+                    }
+                ?>
             </div>
                                 <div id="pages">
                 <div id="thirdsLeft">

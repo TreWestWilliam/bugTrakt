@@ -13,6 +13,13 @@
         $mysqli = new mysqli("127.0.0.1:3308", "root", "", "bugtrakt");
         return $mysqli->query("SELECT `UNAME` FROM `user` WHERE `UID` = $UID");
     }
+    function getUserNameFromID($UID) 
+    {
+        $result = getUserFromID($UID);
+        $user = $result->fetch_assoc();
+        return $user["UNAME"];
+        
+    }
 
 
 ?>
