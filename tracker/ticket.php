@@ -13,10 +13,11 @@
 </head>
 
 <body>
-<?php 
+<?php
     //calling our header
     echo file_get_contents("head.php");
     require_once "mysqlConfig.php";
+    session_start();
     // Getting the ticket id from the URL
     $TID = $_GET["tid"];
    
@@ -37,8 +38,7 @@
     // Getting results
     $ticket = $result->fetch_assoc();
     //Incrementing the views
-    $newViews = $ticket['VIEWS'] + 1;
-    $mysqli->query("UPDATE `ticket` SET `VIEWS` = '$newViews' WHERE `ticket`.`TID` = 1;");
+    $mysqli->query("UPDATE `ticket` SET `VIEWS` = VIEWS + 1 WHERE `ticket`.`TID` = $TID;");
     
     //Now getting the name of the user who created this
     $userID = $ticket['UID'];
@@ -56,6 +56,7 @@
             <div id="ticketBody">
                 <div id="ticketItemContainer">
                     <div id="ticketMeta">
+                        <div id=ticketBorderLeft></div>
                         <div id="ticketInfo">
                             <?php 
                              echo "<p>Created by:" . $userName['UNAME'] . " On: " . $ticket['CREATED'] ." Viewed " . $ticket['VIEWS'] . " time(s)</p>";
@@ -83,16 +84,29 @@
                     //Getting the comment's user
                     $commentUserQuery = getUserFromID($comment['UID']);
                     $commentUser = $commentUserQuery->fetch_assoc();
+                    //Getting the ID for convenience
+                        $CID = $comment['ID'];
                     //Printing the comment.
                         echo "
                         <div id=ticketComment>
                         <div id=ticketInfo>" . $commentUser['UNAME'] . " " . $comment['TIME_CREATED'] . " </div>
                         <div id=ticketControl>
-                        <img id=controlIcon src=options.png alt=cog width=25px height=25px>
+                        <a onClick='showReplyBox(\"reply$CID\")'>
+                        <img id=controlIcon src=options.png alt=options width=25px height=25px>
+                        </a>
                         </div>
-                        <p> " . $comment['CONTENT'] . " </p>";
-                    //Getting the ID for convenience
-                        $CID = $comment['ID'];
+                        <p> " . $comment['CONTENT'] . " </p>
+                            <div id=\"reply$CID\" class=replyBox style=\"display:none; \">
+                                <p>Replying to " . $commentUser['UNAME'] . " </p>
+                                <form method=post action='". "ticket.php?tid=" . $TID . "'>
+                                    Description:<br><textarea name=comment rows=2 cols=100></textarea><br>
+                                    <input type=hidden name=isReply value=1>
+                                    <input type=hidden name=parentComment value=" . $CID . ">
+                                    <input type=submit>
+                                </form>
+                            </div>
+                        ";
+                    
                     //Creating a query for all the replies to the comment
                         $replies = $mysqli->query("SELECT * FROM `comments` WHERE `TID` = $TID AND `is_Reply` = 1 AND `Parent_Comment` = $CID ORDER BY `TIME_CREATED` ASC");
                     //looping through all replies
@@ -101,21 +115,62 @@
                             //Getting the user who made the comment
                             $replyUserQuery = getUserFromID($replySearch['UID']);
                             $replyUser = $replyUserQuery->fetch_assoc();
+                            $RID=$replySearch['ID'];
                             //printing the reply
                                 echo "
                                 <div id=commentReply>
-                                <p id=ticketInfo> " . $replyUser['UNAME'] . " " . $replySearch['TIME_CREATED'] . " </p>
-                                 <div id=ticketControl>
-                                <img id=controlIcon src=options.png alt=cog width=25px height=25px>
-                                </div>
-                                <p> " . $replySearch['CONTENT'] . " </p>
+                                    <p id=ticketInfo> " . $replyUser['UNAME'] . " " . $replySearch['TIME_CREATED'] . " </p>
+                                    <div id=ticketControl>
+                                        <a onClick='showReplyBox(\"reply$RID\")'>
+                                        <img onclick='' id=controlIcon src=options.png alt=cog width=25px height=25px>
+                                        </a>
+                                    </div>
+                                    <p> " . $replySearch['CONTENT'] . " </p>
+
+                                    <div id=\"reply" . $RID . "\" class=replyBox style=\"display:none; \">
+                                        <form method=post action='". "ticket.php?tid=" . $TID . "'>
+                                            Description:<br><textarea name=comment rows=2 cols=100></textarea><br>
+                                            <input type=hidden name=isReply value=1>
+                                            <input type=hidden name=parentComment value=" . $CID . ">
+                                            <input type=submit>
+                                        </form>
+                                    </div>
                                 </div>";
                         }
                     //Closing the div for the comment chain
                     echo "</div>";
                 }
                 
+                $commentError = "";
+                $COMMENT = "";
+                if ($_SERVER["REQUEST_METHOD"] == "POST")
+                {
+                    $UID = $_SESSION["UID"];
+                    $COMMENT = $_POST["comment"];
+                    $isReply = $_POST["isReply"];
+                    $parentComment = $_POST["parentComment"];
+                    $commentQuery = "INSERT INTO `comments` (`ID`, `TID`, `UID`, `CONTENT`, `TIME_CREATED`, `is_Reply`, `Parent_Comment`) VALUES (NULL, '$TID', '$UID', '$COMMENT', CURRENT_TIMESTAMP, '$isReply', '$parentComment');";
+                    $mysqli->query($commentQuery);
+                    $updateQuery = "UPDATE `ticket` SET `UPDATES` = UPDATES + 1, `LAST_UPDATED` = CURRENT_TIMESTAMP WHERE `ticket`.`TID` = $TID;";
+                    $mysqli->query($updateQuery);
+                    //header("Refresh:0");
+                    //Emptying the comment to stop spam
+                    $COMMENT="";
+                    
+                }
                 ?>
+                <div id=replyForm>
+                    <h2>Post a comment</h2>
+                    <form method=post action="">
+                         <?php if ($commentError != "")  {echo "<p id=warning><spawn id=warning>" . $commentError . "</span></p>";}?>
+                Description:<br><textarea name="comment" rows=10 cols=100><?php echo $COMMENT; ?></textarea><br>
+                        <input type="hidden" name="isReply" value=0>
+                        <input type="hidden" name="parentComment" value=0>
+                        <input type=submit>
+                    
+                    </form>
+                
+                </div>
             </div>
         
         </div>
@@ -130,6 +185,20 @@
     ?>
     
 	<script type="text/javascript" src=""></script>
+    <script>
+    function showReplyBox(myString) 
+    {
+        myObject = document.getElementById(myString);
+        if (myObject.style.display == "none") 
+        {
+            myObject.style.display = "block";
+        }
+        else 
+        {
+            myObject.style.display = "none";
+        }
+    }
+    </script>
 </body>
 
 </html>

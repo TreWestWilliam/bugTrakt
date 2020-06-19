@@ -56,6 +56,14 @@ html {
     padding-left:25%;
     padding-right:25%;
 }
+#ticketBorderLeft {
+    width:25%;
+    float:left;
+}
+#ticketBorderRight {
+    width:25%;
+    float:right;
+}
 #ticketBody {
     background-color:white;
     border-color:lightgray;
@@ -74,7 +82,11 @@ html {
     position:fixed;
     height:100%;
     overflow:auto;
+    float:left;
+    
     width:50%;
+    margin-bottom:30.5%;
+    padding-bottom:7.5%;
 }
 
 #ticketItemContainer {
@@ -130,4 +142,39 @@ html {
 #ticketControl img {
     width:7%;
     height:auto;
+}
+#replyCommentForm {
+    display:none;
+}
+.hidden {
+    display:none;
+}
+.replyForm {
+    display:block;
+}
+.replyBox {
+    display:none;
+    padding-top:2%;
+    padding-bottom:2%;
+}
+a:hover {
+    background-color:aquamarine;
+}
+a:active {
+    color:black;
+    font-style: normal;
+    font-variant: normal;
+    text-decoration: none;
+}
+a:visited {
+    color:black;
+    font-style: normal;
+    font-variant: normal;
+    text-decoration: none;
+}
+a:link {
+    color:black;
+    font-style: normal;
+    font-variant: normal;
+    text-decoration: none;
 }
