@@ -65,6 +65,7 @@
                     $dateTimeCreated=$ticket["CREATED"];
                     $DIFFICULTY =$ticket["DIFFICULTY"];
                     $PRIORITY = $ticket["PRIORITY"];
+                    $ASSIGNED = getUserNameFromID($ticket["ASSIGNED_ID"]);
                     
                     if ($PRIORITY == 0) 
                     {
@@ -93,10 +94,11 @@
                     }
                     
                     
+                    
                 echo "<a href=ticket.php?tid=$TicketID><div id=yourTicket>
                 <h2>$TicketID | $TicketName</h2>
                     <p>Created by: $CreatedUserName Created on:$dateTimeCreated</p>
-                    <p>Difficulty: $DifficultyText Priority: $PriorityText</p>
+                    <p>Assigned to:$ASSIGNED Difficulty: $DifficultyText Priority: $PriorityText</p>
                 </div></a>";
                     }
                 ?>

@@ -43,28 +43,52 @@
                             $projectsArray = $projectsArray . " OR " . $temp["PID"];
                         }
                     }
-                    $query = "SELECT * FROM `ticket` WHERE `PID` = $projectsString ORDER BY `LAST_UPDATED` DESC";
+                    
+                    $query = "SELECT * FROM `ticket` WHERE `ASSIGNED_ID` = $UID AND `PID` = $projectsString ORDER BY `LAST_UPDATED` DESC";
                     $ticketsArray = $mysqli->query($query);
-                    if ($ticketsArray->num_rows >= 1) 
+                    if ($ticketsArray->num_rows>=1) 
                     {
                         $i = 9;
-                       while ($ticket = $ticketsArray->fetch_assoc()) 
+                        while ($ticket = $ticketsArray->fetch_assoc()) 
                         {
-                           if ($i > 0) {
-                           $TID = $ticket["TID"];
-                           $Name = $ticket["TITLE"];
-                           $createdBy = getUserNameFromID($ticket["UID"]);
-                           $dateTime_created = $ticket["CREATED"];
+                            if ($i > 0) {
+                            $TID = $ticket["TID"];
+                            $Name = $ticket["TITLE"];
+                            $createdBy = getUserNameFromID($ticket["UID"]);
+                            $dateTime_created = $ticket["CREATED"];
                         echo "<a href=ticket.php?tid=$TID><div id=yourTicket>
                         <h2>$TID | $Name</h2>
                         <p>Created by: $createdBy Created on:$dateTime_created</p>
                         </div></a>";
-                           }
-                           else {break;}
-                           $i=$i-1;
+                            }
+                            else {break;}
+                            $i=$i-1;
                         } 
                     }
-                    
+                    else 
+                    {
+                        $query = "SELECT * FROM `ticket` WHERE `PID` = $projectsString ORDER BY `LAST_UPDATED` DESC";
+                        $ticketsArray = $mysqli->query($query);
+                        if ($ticketsArray->num_rows >= 1) 
+                        {
+                            $i = 9;
+                           while ($ticket = $ticketsArray->fetch_assoc()) 
+                            {
+                               if ($i > 0) {
+                               $TID = $ticket["TID"];
+                               $Name = $ticket["TITLE"];
+                               $createdBy = getUserNameFromID($ticket["UID"]);
+                               $dateTime_created = $ticket["CREATED"];
+                            echo "<a href=ticket.php?tid=$TID><div id=yourTicket>
+                            <h2>$TID | $Name</h2>
+                            <p>Created by: $createdBy Created on:$dateTime_created</p>
+                            </div></a>";
+                               }
+                               else {break;}
+                               $i=$i-1;
+                            } 
+                        }
+                    }
                 }
                 else 
                 {

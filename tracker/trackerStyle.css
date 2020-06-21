@@ -90,11 +90,11 @@ html {
 }
 
 #ticketItemContainer {
-    padding-bottom:1.5%;
+    padding-bottom:2.25%;
     border-bottom-width:1px;
     border-bottom-style:solid;
     border-color:black;
-    margin-bottom:1%;
+    margin-bottom:1.5%;
 }
 
 #ticketInfo {
@@ -108,6 +108,7 @@ html {
     float:right;
     align-content: right;
     text-align:right;
+    position:relative;
 }
 #ticketComment {
     margin-left:1%;
@@ -142,6 +143,7 @@ html {
 #ticketControl img {
     width:7%;
     height:auto;
+    cursor:pointer;
 }
 #replyCommentForm {
     display:none;
@@ -157,6 +159,83 @@ html {
     padding-top:2%;
     padding-bottom:2%;
 }
+
+.optionsList {
+}
+
+.optionsListContent {
+    position:absolute;
+    background-color:beige;
+    min-width:100px;
+    box-shadow: 0px 10px 15px 0px rgba(0,0,0.2);
+    padding: .5% .75%;
+    z-index: 1;
+    right:0;
+    text-align: left;
+}
+.optionsListContent {
+    position:absolute;
+    background-color:beige;
+    min-width:100px;
+    box-shadow: 0px 10px 15px 0px rgba(0,0,0.2);
+    padding: .5% .75%;
+    z-index: 1;
+    right:0;
+    text-align: left;
+}
+
+.optionsListContent ul {
+    list-style: none;
+    
+}
+
+.optionsListContent li {
+    cursor:pointer;
+    background-color:lightgray;
+    transition:background-color .2s;
+}
+.optionsListContent li:hover {
+    background-color:darkgray;
+}
+
+.optionsList:hover .optionsListContent {
+    display:block;
+}
+
+.popupBG {
+    background:rgba(0,0,0,.4);
+    cursor:pointer;
+    display:none;
+    height:100%;
+    position:fixed;
+    text-align:center;
+    top:0;
+    width:100%;
+    z-index:10;
+}
+.popupBG .helper{
+    display:inline-block;
+    height:100%;
+    vertical-align:middle;
+}
+.popupBG > div {
+    
+}
+
+.popupEdit {
+    background-color: #fff;
+    box-shadow: 10px 10px 60px #555;
+    display: inline-block;
+    height: auto;
+    max-width: 551px;
+    min-height: 100px;
+    vertical-align: middle;
+    width: 60%;
+    position: relative;
+    border-radius: 8px;
+    padding: 15px 5%;
+}
+
 a:hover {
     background-color:aquamarine;
 }
