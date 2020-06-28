@@ -40,7 +40,7 @@
                     {
                         while ($temp = $projectsArray->fetch_assoc()) 
                         {
-                            $projectsArray = $projectsArray . " OR " . $temp["PID"];
+                            $projectsString = $projectsString . " OR " . $temp["PID"];
                         }
                     }
                     

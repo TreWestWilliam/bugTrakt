@@ -5,14 +5,14 @@
         <nav>
         <div id="headTop">
             <div id="headLeft">
-                <h1>Home Button</h1>
+                <h1>BugTrakt</h1>
             </div>
             <div id="headRight">
             <ul id="HorizontalList">
-                <li><a href=http://localhost/BugTrakt/index.php>Home</a></li>
-                <li><a href="http://localhost/BugTrakt/about.php">About Us</a></li>
-                <li><a href="http://localhost/BugTrakt/sales.php">Pricing</a></li>
-                <li><a href="http://localhost/BugTrakt/auth/login.php">Log in</a></li>
+                <a href=http://localhost/BugTrakt/index.php><li>Home</li></a>
+                <a href="http://localhost/BugTrakt/about.php"><li>About Us</li></a>
+                <a href="http://localhost/BugTrakt/sales.php"><li>Pricing</li></a>
+                <a href="http://localhost/BugTrakt/auth/login.php"><li>Log in</li></a>
                 </ul>
             </div>
         </div>

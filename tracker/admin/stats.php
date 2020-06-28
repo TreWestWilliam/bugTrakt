@@ -60,8 +60,13 @@
                     $projectID = $_POST["projectSelect"];
                 }
                 
-                if ($projectID != 0) 
+                if ($projectID > 0) 
                 {
+                    $tableOne = $mysqli->query("SELECT * FROM `ticket` WHERE `PID` = $projectID AND `STATUS` = 0 ORDER BY `PRIORITY` DESC");
+                    $tableTwo = $mysqli->query("SELECT * FROM `ticket` WHERE `PID` = $projectID AND `STATUS` = 0 ORDER BY `DIFFICULTY` DESC");
+                    $tableThree = $mysqli->query("SELECT * FROM `ticket` WHERE `ASSIGNED_ID` != 0 AND `STATUS` = 1 AND `PID` = $projectID ORDER BY `ASSIGNED_ID` ASC");
+                    $tableFour = $mysqli->query("SELECT * FROM `ticket` WHERE `PID` = $projectID ORDER BY `TID` ASC");
+                    
                     echo "<div id=\"reportsContainer\">
                     <ul>
                         <li id=\"openBugsP\" onClick=\"show(0)\">Open bugs by Priority</li>
@@ -80,7 +85,6 @@
                             <th>Last Updated</th>
                         </tr>
                     ";
-                    $tableOne = $mysqli->query("SELECT * FROM `ticket` WHERE `PID` = $PID AND `STATUS` = 0 ORDER BY `PRIORITY` DESC");
                     while($tickets = $tableOne->fetch_assoc()) 
                     {
                         $TID = $tickets["TID"];
@@ -111,7 +115,6 @@
                             <th>Created</th>
                             <th>Last Updated</th>
                         </tr>";
-                    $tableTwo = $mysqli->query("SELECT * FROM `ticket` WHERE `PID` = $PID AND `STATUS` = 0 ORDER BY `DIFFICULTY` DESC");
                     while($tickets = $tableTwo->fetch_assoc()) 
                     {
                         $TID = $tickets["TID"];
@@ -144,7 +147,6 @@
                             <th>Created</th>
                             <th>Last Updated</th>
                         </tr>";
-                    $tableThree = $mysqli->query("SELECT * FROM `ticket` WHERE `ASSIGNED_ID` != 0 AND `STATUS` = 1 AND `PID` = $PID ORDER BY `ASSIGNED_ID` ASC");
                     while($tickets = $tableThree->fetch_assoc()) 
                     {
                         $TID = $tickets["TID"];
@@ -182,7 +184,7 @@
                             <th>Last Updated</th>
                             <th>Closed</th>
                         </tr>";
-                    $tableFour = $mysqli->query("SELECT * FROM `ticket` WHERE `PID` = $PID ORDER BY `TID` ASC");
+                    
                     while($tickets = $tableFour->fetch_assoc()) 
                     {
                         $TID = $tickets["TID"];
@@ -209,6 +211,11 @@
                         </tr>";
                     }
                     echo "</table>";
+                    
+                    if ($tableFour->num_rows == 0) 
+                    {
+                        echo "<h2>This project has no rows.</h2>";
+                    }
                 }
                 ?>
                     
