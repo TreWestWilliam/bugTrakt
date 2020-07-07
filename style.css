@@ -43,6 +43,10 @@ nav ul {
     text-align: center;
     display:inline-block;
 }
+#pad {
+    padding-top:1%;
+    padding-bottom:1%;
+}
 nav li {
     font-size:0.95vw;
     text-align: center;
@@ -174,4 +178,85 @@ tbody {
 }
 tr:hover {
     background-color:#FFCE00;
+}
+#centered {
+    padding-left:25%;
+    padding-right:25%;
+    text-align: center;
+}
+/*About Styling*/
+#inspireOne {
+    padding-top:2%;
+    padding-bottom:2%;
+    background-color:black;
+    color:white;
+    text-align:center;
+}
+#inspireTwo {
+    padding-top:2%;
+    padding-bottom:2%;
+    background-color:white;
+    color:black;
+    text-align:center;
+}
+#inspireThree {
+    padding-top:2%;
+    padding-bottom:2%;
+    background-color:aquamarine;
+    color:black;
+    text-align:center;
+}
+
+/*Sales Styling*/
+#salesOne {
+    padding-top:1%;
+    padding-bottom:2%;
+    text-align:center;
+    padding-left:5%;
+    padding-right:5%;
+   
+}
+#pricingContainer{
+    display:flex;
+}
+#pricingOne {
+    width:33.3%;
+    float:left;
+    border-radius:25px;   
+    display:flex;
+    flex-direction:row;
+    
+}
+#minorPadding {
+    padding-left:.5%;
+    padding-right:.5%;
+}
+#pricingTwo {
+    border:2px;
+    border-style:groove;
+    border-radius:25px;
+    background-color:whitesmoke;
+    text-align:center;
+    padding-left:1%;
+    padding-right:1%;
+    overflow:auto;
+}
+#price {
+    color:darkgreen;
+    font-style: oblique;
+}
+#caution {
+    color:darkred;
+}
+#finePrint{
+    font-size:0.5vw;
+    color:darkred;
+    font-style:italic;
+}
+#pricingList {
+    list-style-type:none;
+    background-color:antiquewhite;
+}
+#altList{
+    background-color:palegreen;
 }

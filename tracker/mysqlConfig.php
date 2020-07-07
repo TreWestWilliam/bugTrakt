@@ -1,6 +1,6 @@
 <?php
  //Establishing a Database connection
-    $mysqli = new mysqli("127.0.0.1:3308", "root", "", "bugtrakt");
+    $mysqli = new mysqli("ip:port", "user", "pass", "database");
     // Checking for connection, exiting out otherwise
     if ($mysqli->connect_errno) {
         echo "Failed to connect to MySQL: (" . $mysqli->connect_errno . ") " . $mysqli->connect_error;

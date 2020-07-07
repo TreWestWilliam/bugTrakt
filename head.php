@@ -5,18 +5,17 @@
 <head>
 	<link rel="stylesheet" href="style.css">
 </head>
+
+
 <header>
         <nav>
         <div id="headTop">
             <div id="headLeft">
-                <h1>BugTrakt</h1>
+                <a href="<?php echo $bRoot . "index.php" ?>"><h1>BugTrakt</h1></a>
             </div>
             <div id="headRight">
             <ul id="HorizontalList">
-                <a href="<?php echo $bRoot . "index.php"; ?>"><li>Home</li></a>
-                <a href="<?php echo $bRoot . "about.php"; ?>"><li>About Us</li></a>
-                <a href="<?php echo $bRoot . "sales.php"; ?>"><li>Pricing</li></a>
-                <a href="<?php echo $bRoot . "/auth/login.php"; ?>"><li>Log in</li></a>
+                <a href="<?php echo $bRoot . "auth/login.php"?>" ><li><h1>Log in</h1></li></a>
                 </ul>
             </div>
         </div>

@@ -1,3 +1,3 @@
 <?php 
-    $bRoot = "/BugTrakt/"; // The root of where the tracker is located.
+    $bRoot = ""; // The root of where the tracker is located.
 ?>
