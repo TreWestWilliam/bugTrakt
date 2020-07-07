@@ -14,6 +14,9 @@
 <body>
 <?php 
     include_once("head.php");
+    include_once("tracker/mysqlConfig.php");
+    $tickets = $mysqli->query("SELECT * FROM `ticket`")->num_rows;
+    $users = $mysqli->query("SELECT * FROM `user`")->num_rows;
     ?>
     
 	<main>
@@ -31,8 +34,8 @@
         <div id="bodyContainer">
             <div id="centered">
             <h1>Tracking our stats live!</h1>
-                <h2>1,000,000 Tickets made <br>
-                10,000 Users <br>
+                <h2><?php echo $tickets; ?> Tickets made <br>
+                <?php echo $users; ?> Users <br>
                 What's your hold up?</h2>
                 </div>
         </div>
