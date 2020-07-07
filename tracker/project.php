@@ -15,11 +15,11 @@
 <body onload="start()">
 <?php
     //calling our header
-    echo file_get_contents("head.php");
+    include_once("head.php");
     require_once "mysqlConfig.php";
     session_start();
     $UID = $_SESSION["UID"];
-    // Getting the ticket id from the URL
+    // Getting the project id from the URL
     $ID = $_GET["id"];
    
     //Creating a string to hold the query
@@ -48,7 +48,15 @@
     //Testing to see if the user should be able to view the project
     $userProjQuery = "SELECT * FROM `user-project` WHERE `UID` = $UID AND `PID` = $ID";
     $userProj = $mysqli->query($userProjQuery);
-    
+    $rank = $userProj->fetch_assoc()["rank"];
+    $isAdmin = 0;
+    $isOwner =0;
+    if ($rank >= 1) {
+        $isAdmin = 1;
+        if ($rank==3) {
+            $isOwner=1;
+        }
+    }
     if ($public == 0) 
     {
         if (!($userProj->num_rows >= 1)) 
@@ -84,120 +92,423 @@
                             ?>
                        
                     </div>
-                    <p> <?php echo $desc; ?></p>
-                </div>
-                <?php 
+                    <p> <?php echo $desc; ?></p><br>
+                    <?php 
                  if ($userProj->num_rows >= 1) 
                     {
                         echo "<button onClick=\"leaveProject()\">Leave</button>";
                     }
-                else 
+                    else 
+                    {
+                        echo "<button onClick=\"joinProject()\">Join</button>";
+                    }
+                if ($isOwner==1) 
                 {
-                    echo "<button onClick=\"joinProject()\">Join</button>";
+                    echo " <button onClick=\"startDelete()\">Delete Project </button>";
+                }
+                if ($isAdmin==1) 
+                {
+                    echo " <button onClick=\"startUpdate()\"> Create Update</button><br>";
+                    echo " <button onClick=\"startProjectEdit()\"> Edit Project</button>";
                 }
                 ?>
+                </div>
+                <ul id="reportsList">
+                    <a onClick="tabsShow(0)"><li>Updates</li></a>
+                    <?php 
+                        if ($isAdmin==1) 
+                        {
+                            echo "
+                            <a onClick=\"tabsShow(1)\"><li>Users</li></a>
+                    <a onClick=\"tabsShow(2)\"><li>Tickets</li></a>
+                            ";
+                        }
+                    ?>
+                    
+                </ul>
+                <div id=projectTabs>
+                <div id="updates" class="" style="display:inherit;">
+                    <?php 
+                    $updatesQuery = "SELECT * FROM `project-updates` WHERE `PID` = $ID ORDER BY `UPDATE_ID` DESC";
+                    $updatesArray = $mysqli->query($updatesQuery);
+                    if ($updatesArray->num_rows >= 1) 
+                    {
+                        $i = 5;
+                        //If there isnt at least 5 rows we'll just fetch the ones that exist
+                        if ($updatesArray->num_rows < $i) 
+                        {
+                            $i = $updatesArray->num_rows;
+                        }
+                        while ($update = $updatesArray->fetch_assoc()) 
+                        {
+                            if ($i>0) 
+                            {
+                                $title = $update["TITLE"];
+                                $description = $update["DESCRIPTION"];
+                             echo "<div id=update>
+                                <h1>$title</h1>
+                                <p>$description</p>
+                                </div>";   
+                            }
+                            else 
+                            {
+                                break;
+                            }
+                        }  
+                    }
+                    else 
+                    {
+                        echo "<h2>There's no updates to display.</h2>";
+                    }
+                ?>
+                    
+                </div>
+                <div id="users" class="projectTab" style="display:none;">
+                    <h1>Users</h1>
+                                        <?php 
+                     $projUsers = getProjectUsers($ID);
+                    echo "<table style=\"display:inherit;\" class=reports id=users".$ID." >
+                        <tr>
+                            <th>Username</th>
+                            <th>Email</th>
+                            <th>Rank</th>
+                        </tr>";
+                    foreach ($projUsers as &$user) 
+                    {
+                        echo "<tr>
+                            <th>".getUserNameFromID($user["UID"])."</th>
+                            <th>".getUserEmailFromID($user["UID"])."</th>
+                            <th>".translateRank($user["rank"])."</th>
+                        </tr>";
+                    }
+                     echo "</table><br>
+                     <h1>Invites</h1><br>";
+                    $projectInvites = $mysqli->query("SELECT * FROM `project-invite` WHERE `PID` = " . $ID)->fetch_all(MYSQLI_ASSOC);
+                   if (count($projectInvites) > 0 ) {
+                        echo "<table style=\"display:inherit;\" class=reports id=invites".$ID." >
+                            <tr>
+                                <th>URL</th>
+                                <th>Uses</th>
+                                <th>Rank</th>
+                            </tr>";
+                    foreach ($projectInvites as &$invite) 
+                       {
+                        echo "<tr>
+                                <a href=\"http://localhost/BugTrakt/tracker/projectInvite.php?id=". $invite["INVITE_ID"]."\"><th>projectInvite.php?id=".$invite["INVITE_ID"]."</th></a>
+                                <th>".$invite["USES"]."/".$invite["MAX_USES"]."</th>
+                                <th>".translateRank($invite["RANK"])."</th>
+                            </tr>";
+
+                       }
+                           echo "</table>";
+                   }
+                    else 
+                    {
+                        echo "There's no invites to display";
+                    }
+                    ?>
+                     <a href="inviteCreate.php"><p>Create Invite</p></a>
+                    
+                </div>
+                <div id="stats" class="projectTab" style="display:none;">
+                    
+                <?php 
+                    if ($isAdmin==1) 
+                    {
+                    $projectID = $ID;
+                    $tableOne = $mysqli->query("SELECT * FROM `ticket` WHERE `PID` = $projectID AND `STATUS` = 0 ORDER BY `PRIORITY` DESC");
+                    $tableTwo = $mysqli->query("SELECT * FROM `ticket` WHERE `PID` = $projectID AND `STATUS` = 0 ORDER BY `DIFFICULTY` DESC");
+                    $tableThree = $mysqli->query("SELECT * FROM `ticket` WHERE `ASSIGNED_ID` != 0 AND `STATUS` = 1 AND `PID` = $projectID ORDER BY `ASSIGNED_ID` ASC");
+                    $tableFour = $mysqli->query("SELECT * FROM `ticket` WHERE `PID` = $projectID ORDER BY `TID` ASC");
+                    
+                    echo "<div id=\"reportsContainer\">
+                    <ul id=\"reportsList\">
+                        <li id=\"openBugsP\" onClick=\"statsShow(0)\">Open bugs by Priority</li>
+                        <li id=\"openBugsS\" onClick=\"statsShow(1)\">Open bugs by Severity</li>
+                        <li id=\"bugsByAssigned\" onClick=\"statsShow(2)\">Bugs by Assignment</li>
+                        <li id=\"allBugs\" onClick=\"statsShow(3)\">All Bugs</li>
+                    </ul>
+                    <table class=reports id=\"bugsP\">
+                        <tr>
+                            <th>Ticket ID</th>
+                            <th>Creator</th>
+                            <th>Title</th>
+                            <th>Priority</th>
+                            <th>Difficulty</th>
+                            <th>Created</th>
+                            <th>Last Updated</th>
+                        </tr>
+                    ";
+                    while($tickets = $tableOne->fetch_assoc()) 
+                    {
+                        $TID = $tickets["TID"];
+                        $creator = getUserNameFromID($tickets["UID"]);
+                        $title = $tickets["TITLE"];
+                        $priority = translateDiff($tickets["PRIORITY"]);
+                        $difficulty = translateDiff($tickets["DIFFICULTY"]);
+                        $created = $tickets["CREATED"];
+                        $lastUpdated = $tickets["LAST_UPDATED"];
+                        echo "<tr>
+                            <th>$TID</th>
+                            <th>$creator</th>
+                            <th>$title</th>
+                            <th>$priority</th>
+                            <th>$difficulty</th>
+                            <th>$created</th>
+                            <th>$lastUpdated</th>
+                        </tr>";
+                    }
+                    echo "</table>
+                    <table class=reports id=\"bugsS\">
+                        <tr>
+                            <th>Ticket ID</th>
+                            <th>Creator</th>
+                            <th>Title</th>
+                            <th>Priority</th>
+                            <th>Difficulty</th>
+                            <th>Created</th>
+                            <th>Last Updated</th>
+                        </tr>";
+                    while($tickets = $tableTwo->fetch_assoc()) 
+                    {
+                        $TID = $tickets["TID"];
+                        $creator = getUserNameFromID($tickets["UID"]);
+                        $title = $tickets["TITLE"];
+                        $priority = translateDiff($tickets["PRIORITY"]);
+                        $difficulty = translateDiff($tickets["DIFFICULTY"]);
+                        $created = $tickets["CREATED"];
+                        $lastUpdated = $tickets["LAST_UPDATED"];
+                        echo "<tr>
+                            <th>$TID</th>
+                            <th>$creator</th>
+                            <th>$title</th>
+                            <th>$priority</th>
+                            <th>$difficulty</th>
+                            <th>$created</th>
+                            <th>$lastUpdated</th>
+                        </tr>";
+                    }
+                    echo "</table>
+                    <table class=reports id=\"bugsAssigned\">
+                        <tr>
+                            <th>Ticket ID</th>
+                            <th>Creator</th>
+                            <th>Assigned</th>
+                            <th>Status</th>
+                            <th>Title</th>
+                            <th>Priority</th>
+                            <th>Difficulty</th>
+                            <th>Created</th>
+                            <th>Last Updated</th>
+                        </tr>";
+                    while($tickets = $tableThree->fetch_assoc()) 
+                    {
+                        $TID = $tickets["TID"];
+                        $creator = getUserNameFromID($tickets["UID"]);
+                        $assigned = getUserNameFromID($tickets["ASSIGNED_ID"]);
+                        $status = translateStatus($tickets["STATUS"]);
+                        $title = $tickets["TITLE"];
+                        $priority = translateDiff($tickets["PRIORITY"]);
+                        $difficulty = translateDiff($tickets["DIFFICULTY"]);
+                        $created = $tickets["CREATED"];
+                        $lastUpdated = $tickets["LAST_UPDATED"];
+                        echo "<tr>
+                            <th>$TID</th>
+                            <th>$creator</th>
+                            <th>$assigned</th>
+                            <th>$status</th>
+                            <th>$title</th>
+                            <th>$priority</th>
+                            <th>$difficulty</th>
+                            <th>$created</th>
+                            <th>$lastUpdated</th>
+                        </tr>";
+                    }
+                    echo "</table>
+                    <table class=reports id=\"bugsAll\">
+                        <tr>
+                            <th>Ticket ID</th>
+                            <th>Creator</th>
+                            <th>Assigned</th>
+                            <th>Status</th>
+                            <th>Title</th>
+                            <th>Priority</th>
+                            <th>Difficulty</th>
+                            <th>Created</th>
+                            <th>Last Updated</th>
+                            <th>Closed</th>
+                        </tr>";
+                    
+                    while($tickets = $tableFour->fetch_assoc()) 
+                    {
+                        $TID = $tickets["TID"];
+                        $creator = getUserNameFromID($tickets["UID"]);
+                        $assigned = getUserNameFromID($tickets["ASSIGNED_ID"]);
+                        $status = translateStatus($tickets["STATUS"]);
+                        $title = $tickets["TITLE"];
+                        $priority = translateDiff($tickets["PRIORITY"]);
+                        $difficulty = translateDiff($tickets["DIFFICULTY"]);
+                        $created = $tickets["CREATED"];
+                        $lastUpdated = $tickets["LAST_UPDATED"];
+                        $closed = $tickets["CLOSED"];
+                        echo "<tr>
+                            <th>$TID</th>
+                            <th>$creator</th>
+                            <th>$assigned</th>
+                            <th>$status</th>
+                            <th>$title</th>
+                            <th>$priority</th>
+                            <th>$difficulty</th>
+                            <th>$created</th>
+                            <th>$lastUpdated</th>
+                            <th>$closed</th>
+                        </tr>";
+                    }
+                    echo "</table>";
+                    
+                    if ($tableFour->num_rows == 0) 
+                    {
+                        echo "<h2>This project has no rows.</h2>";
+                    }
+                }
+                ?>
+                </div>
+                </div>
             </div>
         </div>
-        <div id="editPopup" class="popupBG" style="display:none;">
+    </main>
+    <div id="projectEditPopup" class="popupBG" style="display:none;">
             <span class="helper"></span>
             <div class="popupEdit">
-                <h2>Editing comment</h2>
-                <form method="post" action="commentEdit.php">
-                    <input id="formCID" type="hidden" name="comment" value="">
-                    <textarea id="editingText" name="text" rows=10 cols=50></textarea><br>
+                <h2>Editing Project</h2>
+                <form method="post" action="scripts/projectEdit.php">
+                    <input id="formTID" type="hidden" name="PID" value="<?php echo $ID; ?>">
+                    <textarea id="ticketEditingText" name="text" rows=10 cols=50><?php echo $desc; ?></textarea><br>
                         <input type=submit>
                 </form><br>
                 <a>
-                <button onClick=cancelEdit() >Cancel</button>
+                <button onClick=cancelProjectEdit() >Cancel</button>
                 </a>
             </div>
         </div>
-        
-        <div id="assignPopup" class="popupBG" style="display:none;">
+    <div id="updatePopup" class="popupBG" style="display:none;">
             <span class="helper"></span>
             <div class="popupEdit">
-                <h2>Assigning User</h2>
-                <form method="post" action="assignTicket.php">
-                    <input id="TID" type="hidden" name="TID" value="<?php echo $TID; ?>">
-                    <select name="UID">
-                        <option value="0">No one</option>
-                    
-                    </select>
-                    
+                <h2>Creating Update</h2>
+                <form method="post" action="scripts/updateCreate.php">
+                    <input id="formTID" type="hidden" name="PID" value="<?php echo $ID; ?>">
+                    Title:<input name="title" type="text"><br>
+                    Text:<textarea id="ticketEditingText" name="text" rows=10 cols=50></textarea><br>
                         <input type=submit>
                 </form><br>
-                <button onClick=cancelAssign()>Cancel</button>
-
+                <a>
+                <button onClick=cancelUpdate() >Cancel</button>
+                </a>
+            </div>
+        </div>
+     <div id="deletePopup" class="popupBG" style="display:none;">
+            <span class="helper"></span>
+            <div class="popupEdit">
+                <h2>Are you sure you want to delete this project?</h2>
+                <form method="post" action="scripts/projectDelete.php">
+                    <input id="formTID" type="hidden" name="PID" value="<?php echo $ID; ?>">
+                        <input type=submit>
+                </form><br>
+                <a>
+                <button onClick=cancelDelete() >Cancel</button>
+                </a>
             </div>
         </div>
     
-    </main>
     <?php 
     
     //calling our footer
     chdir("..");
-    echo file_get_contents("foot.php");
+    include_once("foot.php");
     ?>
     
 	<script type="text/javascript" src=""></script>
     <script>
-        var editPopup = document.getElementById("editPopup");
-        var assignPopup = document.getElementById("assignPopup");
-    function start() {
-        var editPopup = document.getElementById("editPopup");
-        var assignPopup = document.getElementById("assignPopup");
-        }
-    function showReplyBox(myString) 
-    {
-        myObject = document.getElementById(myString);
-        if (myObject.style.display == "none") 
+        var editPopup = document.getElementById("projectEditPopup");
+        var updatePopup = document.getElementById("updatePopup");
+        var deletePopup = document.getElementById("deletePopup");
+        
+    function startProjectEdit() 
         {
-            myObject.style.display = "block";
-        }
-        else 
-        {
-            myObject.style.display = "none";
-        }
-    }
-    function confirmDelete (deleteURL)
-        {
-         if (confirm("Are you sure you want to delete this?")) 
-         {
-             window.location.href= deleteURL;
-         }   
-        }
-    function startEdit(CID, current) 
-        {
-            var editTextArea = document.getElementById("editingText");
-            editTextArea.value = current;
-            var editCID = document.getElementById("formCID");
-            editCID.value = CID;
+            var editPopup = document.getElementById("projectEditPopup");
             editPopup.style.display = "block";
         }
-    function cancelEdit()  
+    function cancelProjectEdit()  
         {
+            var editPopup = document.getElementById("projectEditPopup");
             editPopup.style.display = "none";
-            ticketToEdit="";
-            var editTextArea = document.getElementById("editingText");
-            editTextArea.value = "";
         }
-    function startAssign() 
+    function startUpdate() 
         {
-            var assignPopup = document.getElementById("assignPopup");
-            assignPopup.style.display = "block";
+            var updatePopup = document.getElementById("updatePopup");
+            updatePopup.style.display = "block";
         }
-    function cancelAssign()  
+    function cancelUpdate()  
         {
-            var assignPopup = document.getElementById("assignPopup");
-            assignPopup.style.display = "none";
+            var updatePopup = document.getElementById("updatePopup");
+            updatePopup.style.display = "none";
         }
+        
+    function startDelete() 
+        {
+            var deletePopup = document.getElementById("deletePopup");
+            deletePopup.style.display = "block";
+        }
+    function cancelDelete()  
+        {
+            var deletePopup = document.getElementById("deletePopup");
+            deletePopup.style.display = "none";
+        }
+        
     function joinProject() 
         {
-            window.location.href= "projectJoin.php?pid=<?php echo $ID ?>";
+            window.location.href= "scripts/projectJoin.php?pid=<?php echo $ID ?>";
         }
         function leaveProject() 
         {
-            window.location.href= "projectLeave.php?pid=<?php echo $ID ?>";
+            window.location.href= "scripts/projectLeave.php?pid=<?php echo $ID ?>";
+        }
+        
+        var statsArr = [
+        document.getElementById("bugsP"),
+        document.getElementById("bugsS"),
+        document.getElementById("bugsAssigned"),
+        document.getElementById("bugsAll")];
+        
+        var tabsArr = [
+            document.getElementById("updates"),
+            document.getElementById("users"),
+            document.getElementById("stats")
+        ];
+        
+        statsShow(0);
+        function hide(item) 
+        {
+            item.style.display = "none";
+        }
+        function tabsHideAll() 
+        {
+            tabsArr.forEach(hide);
+        }
+        function tabsShow(num) 
+        {
+            tabsHideAll();
+            tabsArr[num].style.display="block";
+        }
+        function statsHideAll() 
+        {
+            statsArr.forEach(hide);
+        }
+        
+        function statsShow(num) 
+        {
+            statsHideAll();
+            statsArr[num].style.display="block";
         }
     </script>
 </body>

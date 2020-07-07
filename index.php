@@ -13,7 +13,7 @@
 
 <body>
 <?php 
-    echo file_get_contents("head.php");
+    include_once("head.php");
     ?>
     
 	<main>
@@ -42,7 +42,7 @@ Maecenas at mauris venenatis, ultrices mi a, semper sapien. Nunc tempus ante a l
         </div>
     </main>
     <?php 
-    echo file_get_contents("foot.php");
+    include_once("foot.php");
     ?>
     
 	<script type="text/javascript" src=""></script>

@@ -15,7 +15,7 @@
 <body>
 <?php 
     //calling our header
-    echo file_get_contents("head.php");
+    include_once("head.php");
     ?>
     
 	<main>

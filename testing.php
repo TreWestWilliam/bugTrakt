@@ -15,7 +15,7 @@
 <body>
 <?php 
     //calling our header
-    echo file_get_contents("head.php");
+    include_once("head.php");
     ?>
     
 	<main>
@@ -33,7 +33,7 @@
     </main>
     <?php 
     //calling our footer
-    echo file_get_contents("foot.php");
+    include_once("foot.php");
     ?>
     
 	<script type="text/javascript" src=""></script>

@@ -15,7 +15,7 @@
 <body>
 <?php 
     //calling our header
-    echo file_get_contents("head.php");
+    include_once("head.php");
     ?>
     
 	<main>
@@ -25,6 +25,7 @@
             Search: <input type="text" name="search" content="<?php if (isset($_POST["search"])) {echo $_POST["search"];} ?>"> <br>
                 <input type=hidden name=page value=1>
                 <input type="submit">
+                <a href="projectCreate.php"><p>Create a project</p></a>
             </form>
             <div id="ticketContainer">
                 <?php 
@@ -185,7 +186,7 @@
     
     //calling our footer
     chdir("..");
-    echo file_get_contents("foot.php");
+    include_once("foot.php");
     ?>
     
 	<script type="text/javascript">

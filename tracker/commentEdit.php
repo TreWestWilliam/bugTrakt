@@ -21,7 +21,7 @@
                     $ticketQuery = $mysqli->query("SELECT * FROM `ticket` WHERE `TID` = $TID");
                     
                     //Checking if person is the creator of the comment
-                    if ($CID == $comment["TID"]) 
+                    if ($UID == $comment["UID"]) 
                     {
                         $changeCommentQuery = "UPDATE `comments` SET `CONTENT` = '$text' WHERE `comments`.`ID` = $CID";
                         $mysqli->query($changeCommentQuery);

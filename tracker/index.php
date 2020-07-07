@@ -15,7 +15,7 @@
 <body>
 <?php 
     //calling our header
-    echo file_get_contents("head.php");
+    include_once("head.php");
     require_once "mysqlConfig.php";
     session_start();
     ?>
@@ -179,7 +179,7 @@
     <?php 
     //calling our footer
     chdir("..");
-    echo file_get_contents("foot.php");
+    include_once("foot.php");
     ?>
     
 	<script type="text/javascript" src=""></script>

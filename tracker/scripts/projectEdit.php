@@ -1,12 +1,12 @@
 <?php 
-    require_once "mysqlConfig.php";
+    require_once "../mysqlConfig.php";
     session_start();
 
-function editTicket($content,$TID,$mysqli) 
+function editProject($content,$PID,$mysqli) 
 {
-    $changeTicketQuery = "UPDATE `ticket` SET `CONTENT` = '$content' WHERE `ticket`.`TID` = $TID;";
-    $mysqli->query($changeTicketQuery);
-    header("location:ticket.php?tid=$TID");
+    $changeProjectQuery = "UPDATE `projects` SET `DESCRIPTION` = '$content' WHERE `projects`.`ID` = $PID;";
+    $mysqli->query($changeProjectQuery);
+    header("location:../project.php?id=$PID");
 }
 //Checking logged in user
     if(isset($_SESSION["UID"])) 
@@ -15,31 +15,30 @@ function editTicket($content,$TID,$mysqli)
         // checking for comment
         if (!empty($_POST)) 
         {
-            if (isset($_POST["TID"]) && isset($_POST["text"])) 
+            if (isset($_POST["PID"]) && isset($_POST["text"])) 
             {
-                $TID = $_POST["TID"];
+                $PID = $_POST["PID"];
                 $text = $_POST["text"];
-                $ticketQuery = $mysqli->query("SELECT * FROM `ticket` WHERE `TID` = $TID");
-                //Making suer we got a row
-                if ($ticketQuery->num_rows == 1) 
+                $projectQuery = $mysqli->query("SELECT * FROM `projects` WHERE `ID` = $PID");
+                //Making sure we got a row
+                if ($projectQuery->num_rows == 1) 
                 {
-                    $ticket = $ticketQuery->fetch_assoc();
+                    $project = $projectQuery->fetch_assoc();
                     
-                    //Checking if person is the creator of the ticket
-                    if ($UID == $ticket["UID"]) 
+                    //Checking if person is the owner of the project
+                    if ($UID == $project["ownerID"]) 
                     {
-                        editTicket($text,$TID,$mysqli);
+                        editProject($text,$PID,$mysqli);
                     }//Otherwise check the user's permissions
                     else
                     {
-                        $PID = $ticket["PID"];
                         $permQuery = $mysqli->query("SELECT * FROM `user-project` WHERE `UID` = $UID AND `PID` = $PID");
                         if ($permQuery->num_rows == 1) 
                         {
                             $perm = $permQuery->fetch_assoc();
                             if ($perm["rank"] >=2) 
                             {
-                                editTicket($text,$TID,$mysqli);
+                                editProject($text,$PID,$mysqli);
                             }
                             else 
                             {
@@ -54,12 +53,12 @@ function editTicket($content,$TID,$mysqli)
                 }
                 else 
                 {
-                    echo "No ticket";
+                    echo "No project";
                 }
             }
             else 
             {
-                echo "No ticket";
+                echo "No project";
             }
         }
         else 

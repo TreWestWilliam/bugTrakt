@@ -15,7 +15,30 @@
 <body>
 <?php 
     //calling our header
-    echo file_get_contents("head.php");
+    include_once("head.php");
+    
+    function drawTicket($ticket) 
+    {
+        $TicketID = $ticket["TID"];
+        $TicketName = $ticket["TITLE"];
+        $CreatedUserName=getUserNameFromID($ticket["UID"]);
+        $dateTimeCreated=$ticket["CREATED"];
+        $DIFFICULTY =$ticket["DIFFICULTY"];
+        $PRIORITY = $ticket["PRIORITY"];
+        $ASSIGNED = getUserNameFromID($ticket["ASSIGNED_ID"]);
+                    
+        $PriorityText = translateDiff($PRIORITY);
+        $DifficultyText = translateDiff($DIFFICULTY);
+                    
+        echo "<a href=ticket.php?tid=$TicketID><div id=yourTicket>
+                <h2>$TicketID | $TicketName</h2>
+                    <p>Created by: $CreatedUserName Created on:$dateTimeCreated</p>
+                    <p>Assigned to:$ASSIGNED Difficulty: $DifficultyText Priority: $PriorityText</p>
+                </div></a>";
+    }
+    
+    
+    
     ?>
     
 	<main>
@@ -24,107 +47,302 @@
             <p>Fitler/Search:</p>
             <form method="post" action="">
             Search: <input type="text" name="search"> <br>
-            Active: <select id="active" name="isactive">
-                <option value="either">Either</option>
-                <option value="curactive">Open</option>
-                <option value="inactive">Closed</option>
-                </select><br>
-                Amount: <select id="pages" name="pages">
-                <option value="ten">10/page</option>
-                <option value="five">5/page</option>
-                <option value="fifteen">15/page</option>
-                <option value="twenty">20/page</option>
-                <option value="twentyFive">25/page</option>
-                <option value="fifty">50/page</option>
+
+                <?php
+                require_once"mysqlConfig.php";
+                session_start();
+                $UID = $_SESSION["UID"];
+                $query = $mysqli->query("SELECT * FROM `user-project` WHERE `UID` = $UID");
+                if ($query->num_rows >= 1) 
+                {
+                    echo "Project: <select name=projectSelect>";
+                    echo "<option value=\"-1\">Any</option>";
+                    while ($project = $query->fetch_assoc()) 
+                    {
+                        $PID = $project["PID"];
+                        $projName = getProjectName($PID);
+                        echo "<option value=$PID>$projName</option>";  
+                    }
+                    echo "</select><br>";
+                }
+                ?>
+                Active: <select id="active" name="active">
+                <option value="-1">Any</option>
+                <option value="0">Open</option>
+                <option value="1">Active</option>
+                <option value="2">Inactive</option>
+                <option value="3">Closed</option>
                 </select><br>
                 Priority: <select id="priority" name="priority">
-                <option value="any">Any</option>
-                <option value="High">High</option>
-                <option value="Medium">Medium</option>
-                <option value="Low">Low</option>
+                <option value="-1">Any</option>
+                <option value="2">High</option>
+                <option value="1">Medium</option>
+                <option value="0">Low</option>
                 </select><br>
                 Difficulty: <select id="difficulty" name="difficulty">
-                <option value="any">Any</option>
-                <option value="High">High</option>
-                <option value="Medium">Medium</option>
-                <option value="Low">Low</option>
+                <option value="-1">Any</option>
+                <option value="2">High</option>
+                <option value="1">Medium</option>
+                <option value="0">Low</option>
                 </select><br>
+                <input type=hidden name=page value=1>
                 <input type="submit">
             </form>
             <div id="ticketContainer">
                 <?php 
-                require_once"mysqlConfig.php";
                 
-                $results = $mysqli->query("SELECT * FROM `ticket` WHERE `PID` = 1");
+                //SELECT * FROM `ticket` WHERE `PID` = 1 AND `CONTENT` LIKE '%test%' AND `PRIORITY` = 0 AND `DIFFICULTY` = 0 AND `STATUS` = 1
                 
-                while($ticket = $results->fetch_assoc()) 
+                $search = "";
+                $projectID=-1;
+                $start =0;
+                $active=-1;
+                $priority=-1;
+                $difficulty=-1;
+                $page = 1;
+                $rows = 0;
+                
+                $query = "SELECT * FROM `ticket` WHERE ";
+                $queryCount=0;
+                
+                if (!empty($_POST)) 
                 {
-                    $TicketID = $ticket["TID"];
-                    $TicketName = $ticket["TITLE"];
-                    $CreatedUserName=getUserNameFromID($ticket["UID"]);
-                    $dateTimeCreated=$ticket["CREATED"];
-                    $DIFFICULTY =$ticket["DIFFICULTY"];
-                    $PRIORITY = $ticket["PRIORITY"];
-                    $ASSIGNED = getUserNameFromID($ticket["ASSIGNED_ID"]);
+                    if (isset($_POST["search"])) 
+                    {
+                        $search = $_POST["search"];
+                    }
+                    if (isset($_POST["projectSelect"])) 
+                    {
+                        $projectID = $_POST["projectSelect"];
+                    }
+                    if (isset($_POST["active"]))
+                    {
+                        $active = $_POST["active"];
+                    }
+                    if (isset($_POST["priority"]))
+                    {
+                        $priority = $_POST["priority"];
+                    }
+                    if (isset($_POST["difficulty"]))
+                    {
+                        $difficulty = $_POST["difficulty"];
+                    }
+                    if (isset ($_POST["page"])) 
+                    {
+                        $page = $_POST["page"];
+                        $start = ($start + $page - 1) * 10;
+                    }
+                    if ($projectID!=-1) 
+                    {
+                        $query .= "`PID` = 1 ";
+                        $queryCount++;
+                    }
+                    if ($search!="") 
+                    {
+                        if ($queryCount>0) 
+                        {
+                            $query .= "AND ";
+                        }
+                        $query .= "`CONTENT` LIKE '%$search%' ";
+                        $queryCount++;
+                    }
+                    if ($priority != -1) 
+                    {
+                        if ($queryCount>0) 
+                        {
+                            $query .= "AND ";
+                        }
+                        $query .= "`PRIORITY` = $priority ";
+                        $queryCount++;
+                    }
+                    if ($difficulty != -1) 
+                    {
+                        if ($queryCount>0) 
+                        {
+                            $query .= "AND ";
+                        }
+                        $query .= "`DIFFICULTY` = $difficulty ";
+                        $queryCount++;
+                    }
+                    if ($active != -1) 
+                    {
+                        if ($queryCount>0) 
+                        {
+                            $query .= "AND ";
+                        }
+                        $query .= "`STATUS` = 1";
+                        $queryCount++;
+                    }
+                    if ($query == "SELECT * FROM `ticket` WHERE ") 
+                    {
+                        $results = $mysqli->query("SELECT * FROM `ticket` WHERE `PID` = 1");
+                        if ($results->num_rows > $start) 
+                        {
+                           $results->data_seek(intval($start)); 
+                        }
+                        else 
+                        {
+                            echo "Invalid page";
+                        }
+
+                        $limiter=10;
+                        while ($ticket = $results->fetch_assoc()) 
+                        {
+                            if ($limiter<=0) 
+                            {break;}
+                            else 
+                            {
+                                $limiter--;
+                            }
+                            drawTicket($ticket);
+                        }
+                        $rows = $results->num_rows;
+                    }
+                    else 
+                    {
+                        $results = $mysqli->query($query);
+                        if ($results->num_rows > $start) 
+                        {
+                           $results->data_seek(intval($start)); 
+                        }
+                        else 
+                        {
+                            echo "Invalid page";
+                        }
+
+                        //echo $query;
+                        
+                        $limiter=10;
+                        while ($ticket = $results->fetch_assoc()) 
+                        {
+                            if ($limiter<=0) 
+                            {break;}
+                            else 
+                            {
+                                $limiter--;
+                            }
+                            drawTicket($ticket);
+                        }
+                        $rows = $results->num_rows;
+                    }
                     
-                    if ($PRIORITY == 0) 
+                }
+                else 
+                {
+                    $results = $mysqli->query("SELECT * FROM `ticket` WHERE `PID` = 1");
+                    if ($results->num_rows > $start) 
                     {
-                        $PriorityText="Low";
+                           $results->data_seek(intval($start)); 
                     }
-                    else if ($PRIORITY == 1) 
+                    else 
                     {
-                        $PriorityText="Medium";
+                            echo "Invalid page";
                     }
-                    else  
+
+                        $limiter=10;
+                    while ($ticket = $results->fetch_assoc()) 
                     {
-                        $PriorityText="High";
+                        if ($limiter<=0) 
+                        {break;}
+                        else 
+                        {
+                            $limiter--;
+                        }
+                        drawTicket($ticket);
                     }
-                    
-                    if ($DIFFICULTY == 0) 
-                    {
-                        $DifficultyText="Low";
-                    }
-                    else if ($DIFFICULTY == 1) 
-                    {
-                        $DifficultyText="Medium";
-                    }
-                    else  
-                    {
-                        $DifficultyText="High";
-                    }
-                    
-                    
-                    
-                echo "<a href=ticket.php?tid=$TicketID><div id=yourTicket>
-                <h2>$TicketID | $TicketName</h2>
-                    <p>Created by: $CreatedUserName Created on:$dateTimeCreated</p>
-                    <p>Assigned to:$ASSIGNED Difficulty: $DifficultyText Priority: $PriorityText</p>
-                </div></a>";
-                    }
+                    $rows = $results->num_rows;
+                }
+                
+
                 ?>
             </div>
-                                <div id="pages">
+            <div id="pages">
                 <div id="thirdsLeft">
-                    Previous
+                    <?php 
+                        
+                        $pages = ceil($rows / 10);
+                        $minPage = 1; $maxPage = 5;
+                        $maxPage = $page+2;
+                        $minPage = $page - 2;
+                        if ($minPage <= 0 ) 
+                        {
+                            $minPage=1;
+                            $maxPage=5;
+                        }
+                        if($maxPage>$pages) 
+                        {
+                            $maxPage=$pages;
+                        } 
+                        $previous = $page -1;
+                        if ($previous >1) 
+                        {
+                            $previous = 1;
+                        }
+                        $next = $page+1;
+                        if ($next > $maxPage) 
+                        {
+                            $next = $maxPage;
+                        }
+                    
+                        echo "<a onClick=\"selectPage($previous)\">Previous</a>";
+                        ?>
                 </div>
                 <div id="thirdsCenter">
-                1 2 3 4 5
+                    <p>
+                    
+                        <?php
+                        
+                        for ($i=$minPage;$i<$maxPage+1;$i++) 
+                        {
+                            if ($page != $i) 
+                            {
+                                echo "<a onClick=\"selectPage($i)\">$i</a>";
+                            }
+                            else 
+                            {
+                                echo $i;
+                            }
+                        }
+                    ?>
+                    </p>
                 </div>
                 <div id="thirdsRight">
-                Next
+                    <p>
+                    <?php echo "<a onClick=\"selectPage($next)\">Next</a>"?>
+                </p>
                 </div>
             </div>
         </div>
 
+        <form id=pageForm action="" method="post">
+            <input type=hidden name=search value="<?php echo $search; ?>">
+            <input type=hidden name=projectSelect value="<?php echo $project; ?>">
+            <input type=hidden name=active value="<?php echo $active; ?>">
+            <input type=hidden name=priority value="<?php echo $priority; ?>">
+            <input type=hidden name=difficulty value="<?php echo $difficulty; ?>">
+            <input type=hidden name=page id="pageSelect" value="<?php echo $page; ?>">
+        </form>
+        
     </main>
+    
+    
+	<script type="text/javascript" src=""></script>
+    <script type="text/javascript">
+        var pageForm = document.getElementById("pageForm");
+        var pageSelect = document.getElementById("pageSelect");
+        
+        function selectPage(pageNum) 
+        {
+            pageSelect.value = pageNum;
+            pageForm.submit();
+        }
+    </script>
+</body>
     <?php 
     
     //calling our footer
     chdir("..");
-    echo file_get_contents("foot.php");
+    include_once("foot.php");
     ?>
-    
-	<script type="text/javascript" src=""></script>
-</body>
 
 </html>

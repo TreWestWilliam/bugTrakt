@@ -16,7 +16,7 @@
 <?php 
     //calling our header
     chdir("..");
-    echo file_get_contents("head.php");
+    include_once("head.php");
     //Initilize session
     session_start();
     //Check if the user is logged in

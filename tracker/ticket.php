@@ -15,7 +15,7 @@
 <body onload="start()">
 <?php
     //calling our header
-    echo file_get_contents("head.php");
+    include_once("head.php");
     require_once "mysqlConfig.php";
     session_start();
     // Getting the ticket id from the URL
@@ -248,22 +248,39 @@
 
             </div>
         </div>
+        
+        <div id="ticketEditPopup" class="popupBG" style="display:none;">
+            <span class="helper"></span>
+            <div class="popupEdit">
+                <h2>Editing ticket</h2>
+                <form method="post" action="ticketEdit.php">
+                    <input id="formTID" type="hidden" name="TID" value="<?php echo $TID; ?>">
+                    <textarea id="ticketEditingText" name="text" rows=10 cols=50><?php echo $ticket["CONTENT"] ?></textarea><br>
+                        <input type=submit>
+                </form><br>
+                <a>
+                <button onClick=cancelTicketEdit() >Cancel</button>
+                </a>
+            </div>
+        </div>
 
     </main>
     <?php 
     
     //calling our footer
     chdir("..");
-    echo file_get_contents("foot.php");
+    include_once("foot.php");
     ?>
     
 	<script type="text/javascript" src=""></script>
     <script>
         var editPopup = document.getElementById("editPopup");
         var assignPopup = document.getElementById("assignPopup");
+        var ticketEditPopup = document.getElementById("ticketEditPopup");
     function start() {
         var editPopup = document.getElementById("editPopup");
         var assignPopup = document.getElementById("assignPopup");
+        var ticketEditPopup = document.getElementById("ticketEditPopup");
         }
     function showReplyBox(myString) 
     {
@@ -298,6 +315,16 @@
             ticketToEdit="";
             var editTextArea = document.getElementById("editingText");
             editTextArea.value = "";
+        }
+    function startTicketEdit() 
+        {
+            var ticketEditPopup = document.getElementById("ticketEditPopup");
+            ticketEditPopup.style.display = "block";
+        }
+    function cancelTicketEdit()  
+        {
+            var ticketEditPopup = document.getElementById("ticketEditPopup");
+            ticketEditPopup.style.display = "none";
         }
     function startAssign() 
         {

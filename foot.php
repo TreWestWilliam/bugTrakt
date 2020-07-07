@@ -1,14 +1,17 @@
+<?php 
+    include_once("config.php")
+?>
+
 <head>
 	<link rel="stylesheet" href="style.css">
 </head>	
 <footer>
-        <p id="footLeft">Copyright William West 2020</p>
+        <p id="footLeft">Copyright &#169; William West 2020</p>
         <div id="footBot">
         <ul id="footList">
-            <a href="http://localhost/BugTrakt/sitemap.xml"><li id="footList">Sitemap</li></a>
-            <a href="http://localhost/BugTrakt/testing.php"><li id="footList">Testing information</li></a>
-            <a href="http://localhost/BugTrakt/tracker/index.php"><li id="footlist">Logged in</li></a>
-            <a href="http://localhost/BugTrakt/index.php"><li id="footlist">Logged out</li></a>
+            <a id="footLink" href="<?php echo $bRoot. "sitemap.xml"; ?>"><li id="footList">Sitemap</li></a>
+            <a id="footLink" href="<?php echo $bRoot."testing.php"; ?>" ><li id="footList">Testing information</li></a>
+            <a id="footLink" href="https://github.com/TreWestWilliam/bugTrakt" ><li id="footList">Github</li></a>
             </ul>
         </div>
-    </footer>
+</footer>

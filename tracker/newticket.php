@@ -15,23 +15,26 @@
 <body>
 <?php 
     //calling our header
-    echo file_get_contents("head.php");
+    include_once("head.php");
     ?>
     
 	<main>
         <?php
         include_once("mysqlConfig.php");
         session_start();
+        $UID = $_SESSION["UID"];
         
         $TITLE="";
         $DESCRIPTION="";
         $PRIORITY=0;
         $DIFFICULTY=0;
         $TitleError=""; $DescriptionError="";
+        $PID=0;
         if ($_SERVER["REQUEST_METHOD"] == "POST") 
         {
             $TITLE=trim($_POST["title"]);
             $DESCRIPTION=trim($_POST["desc"]);
+            $PID=$_POST["projectSelect"];
             if ($TITLE == "") 
             {
                 $TitleError = "No Title provided";
@@ -61,8 +64,8 @@
             }
             if ($TitleError == "" && $DescriptionError == "") 
             {
-                $UID = $_SESSION["UID"];
-                $query = "INSERT INTO `ticket` (`TID`, `UID`, `PID`, `CONTENT`, `VIEWS`, `PRIORITY`, `DIFFICULTY`, `UPDATES`, `LAST_UPDATED`, `STATUS`, `CREATED`, `CLOSED`, `TITLE`) VALUES (NULL, '$UID', '1', '$DESCRIPTION', '1', '$PRIORITY', '$DIFFICULTY', '1', CURRENT_TIMESTAMP, 'OPEN', CURRENT_TIMESTAMP, NULL, '$TITLE');";
+                
+                $query = "INSERT INTO `ticket` (`TID`, `UID`, `PID`, `CONTENT`, `VIEWS`, `PRIORITY`, `DIFFICULTY`, `UPDATES`, `LAST_UPDATED`, `STATUS`, `CREATED`, `CLOSED`, `TITLE`) VALUES (NULL, '$UID', '$PID', '$DESCRIPTION', '1', '$PRIORITY', '$DIFFICULTY', '1', CURRENT_TIMESTAMP, 'OPEN', CURRENT_TIMESTAMP, NULL, '$TITLE');";
                 if ($execute = $mysqli->prepare($query)) 
                 {
                     //Execute our executable
@@ -93,6 +96,21 @@
                 </select><br>
                 <?php if ($DescriptionError != "")  {echo "<p id=warning><spawn id=warning>" .$DescriptionError . "</span></p>";}?>
                 Description:<textarea name="desc" rows=1 cols=30><?php echo $DESCRIPTION; ?></textarea><br>
+                <?php
+                $query = $mysqli->query("SELECT * FROM `user-project` WHERE `UID` = $UID");
+                if ($query->num_rows >= 1) 
+                {
+                    echo "Project: <select name=projectSelect>";
+                    while ($project = $query->fetch_assoc()) 
+                    {
+                        $PID = $project["PID"];
+                        $projName = getProjectName($PID);
+                        echo "<option value=$PID>$projName</option>";  
+                    }
+                    echo "</select><br>";
+                }
+                ?>
+                
                 <input type=submit>
             </form>
         </div>
@@ -101,7 +119,7 @@
     
     //calling our footer
     chdir("..");
-    echo file_get_contents("foot.php");
+    include_once("foot.php");
     ?>
     
 	<script type="text/javascript" src=""></script>

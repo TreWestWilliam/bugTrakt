@@ -17,7 +17,7 @@
                 //Making suer we got a row
                 if ($ticketQuery->num_rows == 1) 
                 {   
-                    //Checking if person is the creator of the comment
+                    //Checking if person is the creator of the ticket
                     if ($TID == $ticket["UID"]) 
                     {
                         deleteTicket($TID,$mysqli);
