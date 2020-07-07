@@ -72,6 +72,7 @@
                                     <a onClick='startTicketEdit()'><li>Edit</li></a>
                                     <a  onClick=confirmDelete(\"ticketDelete.php?ticket=$TID\")><li>Delete</li></a>
                                     <a onClick='startAssign()'><li>Assign User</li></a>
+                                    <a onClick='startStatus()'><li>Change Status</li></a>
                                 </ul>
                             </div>"
                             ?>
@@ -263,6 +264,26 @@
                 </a>
             </div>
         </div>
+        
+        <div id="status" class="popupBG" style="display:none;">
+            <span class="helper"></span>
+            <div class="popupEdit">
+                <h2>Editing ticket</h2>
+                <form method="post" action="scripts/statusChange.php">
+                    <input id="formTID" type="hidden" name="TID" value="<?php echo $TID; ?>">
+                    Status: <select id="active" name="status">
+                <option value="0">Open</option>
+                <option value="1">Active</option>
+                <option value="2">Inactive</option>
+                <option value="3">Closed</option>
+                </select>
+                    <input type=submit>
+                </form><br>
+                <a>
+                <button onClick=cancelStatus() >Cancel</button>
+                </a>
+            </div>
+        </div>
 
     </main>
     <?php 
@@ -277,6 +298,7 @@
         var editPopup = document.getElementById("editPopup");
         var assignPopup = document.getElementById("assignPopup");
         var ticketEditPopup = document.getElementById("ticketEditPopup");
+        var status = document.getElementById("status");
     function start() {
         var editPopup = document.getElementById("editPopup");
         var assignPopup = document.getElementById("assignPopup");
@@ -335,6 +357,17 @@
         {
             var assignPopup = document.getElementById("assignPopup");
             assignPopup.style.display = "none";
+        }
+        
+    function startStatus() 
+        {
+            var status = document.getElementById("status");
+            status.style.display = "block";
+        }
+    function cancelStatus()  
+        {
+            var status = document.getElementById("status");
+            status.style.display = "none";
         }
     </script>
 </body>

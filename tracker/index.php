@@ -31,36 +31,48 @@
                 $projectsQuery = "SELECT * FROM `user-project` WHERE `UID` = $UID";
                 $projectsArray = $mysqli->query($projectsQuery);
                 $projectsString = "";
+                $projectsIn = "";
                 if ($projectsArray->num_rows >= 1) 
                 {
                     $temp = $projectsArray->fetch_assoc();
                     $projectsString = "".$temp["PID"];
+                    $projectsIn = "".$temp["PID"];
                     
                     if ($projectsArray->num_rows > 1) 
                     {
                         while ($temp = $projectsArray->fetch_assoc()) 
                         {
                             $projectsString = $projectsString . " OR " . $temp["PID"];
+                            $projectsIn= $projectsIn.",".$temp["PID"];
                         }
                     }
-                    
-                    $query = "SELECT * FROM `ticket` WHERE `ASSIGNED_ID` = $UID AND `PID` = $projectsString ORDER BY `LAST_UPDATED` DESC";
+                    $query = "SELECT * FROM `ticket` WHERE `ASSIGNED_ID` = $UID AND `PID` IN ($projectsIn) ORDER BY `LAST_UPDATED` DESC";
                     $ticketsArray = $mysqli->query($query);
                     if ($ticketsArray->num_rows>=1) 
                     {
-                        $i = 9;
+                        $i = 8;
                         while ($ticket = $ticketsArray->fetch_assoc()) 
                         {
                             if ($i > 0) {
-                            $TID = $ticket["TID"];
-                            $Name = $ticket["TITLE"];
-                            $createdBy = getUserNameFromID($ticket["UID"]);
-                            $dateTime_created = $ticket["CREATED"];
-                        echo "<a href=ticket.php?tid=$TID><div id=yourTicket>
-                        <h2>$TID | $Name</h2>
-                        <p>Created by: $createdBy Created on:$dateTime_created</p>
-                        </div></a>";
-                            }
+                            $TicketID = $ticket["TID"];
+                            $TicketName = $ticket["TITLE"];
+                            $CreatedUserName=getUserNameFromID($ticket["UID"]);
+                            $dateTimeCreated=$ticket["CREATED"];
+                            $DIFFICULTY =$ticket["DIFFICULTY"];
+                            $PRIORITY = $ticket["PRIORITY"];
+                            $ASSIGNED = getUserNameFromID($ticket["ASSIGNED_ID"]);
+                            $STATUS = translateStatus($ticket["STATUS"]);
+
+                            $PriorityText = translateDiff($PRIORITY);
+                            $DifficultyText = translateDiff($DIFFICULTY);
+
+                            echo "<a href=ticket.php?tid=$TicketID><div id=yourTicket>
+                                    <h2>$TicketID | $TicketName</h2>
+                                        <p>Created by: $CreatedUserName Created on:$dateTimeCreated</p>
+                                        <p>Assigned to:$ASSIGNED Difficulty: $DifficultyText Priority: $PriorityText</p>
+                                        <p>Status: $STATUS </p>
+                                    </div></a>";
+                                                }
                             else {break;}
                             $i=$i-1;
                         } 

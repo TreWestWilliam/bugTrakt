@@ -26,6 +26,7 @@
         $DIFFICULTY =$ticket["DIFFICULTY"];
         $PRIORITY = $ticket["PRIORITY"];
         $ASSIGNED = getUserNameFromID($ticket["ASSIGNED_ID"]);
+        $STATUS = translateStatus($ticket["STATUS"]);
                     
         $PriorityText = translateDiff($PRIORITY);
         $DifficultyText = translateDiff($DIFFICULTY);
@@ -34,6 +35,7 @@
                 <h2>$TicketID | $TicketName</h2>
                     <p>Created by: $CreatedUserName Created on:$dateTimeCreated</p>
                     <p>Assigned to:$ASSIGNED Difficulty: $DifficultyText Priority: $PriorityText</p>
+                    <p>Status: $STATUS </p>
                 </div></a>";
     }
     
