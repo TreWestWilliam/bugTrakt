@@ -182,6 +182,7 @@
                         </tr>";
                     }
                      echo "</table><br>
+                     <button onClick=\"startUsers()\">Manage Users</button>
                      <h1>Invites</h1><br>";
                     $projectInvites = $mysqli->query("SELECT * FROM `project-invite` WHERE `PID` = " . $ID)->fetch_all(MYSQLI_ASSOC);
                    if (count($projectInvites) > 0 ) {
@@ -419,6 +420,37 @@
                 </a>
             </div>
         </div>
+         <div id="usersPopup" class="popupBG" style="display:none;">
+            <span class="helper"></span>
+            <div class="popupEdit">
+                <h2>What would you like to do?</h2>
+                <form method="post" action="scripts/userManage.php">
+                    <input type="hidden" name="PID" value="<?php echo $ID; ?>">
+                    User: <select id="active" name="user">
+                    <?php 
+                        $users = getProjectUsers($ID);
+                        foreach ($users as &$user) 
+                        {
+                            $userId = $user["UID"];
+                            $userName = getUserNameFromID($userId);
+                            echo "<option value=\"$userId\"> $userName </option>";
+                        }
+                    ?>
+                    </select>
+                    Action: <select id="active" name="action">
+                        <option value="-1">Remove User</option>
+                        <option value="0">Make QA</option>
+                        <option value="1">Make Developer</option>
+                        <option value="2">Make Admin</option>
+                        <option value="3">Make Owner</option>
+                </select>
+                        <input type=submit>
+                </form><br>
+                <a>
+                <button onClick=cancelUsers() >Cancel</button>
+                </a>
+            </div>
+        </div>
     
     <?php 
     
@@ -463,6 +495,17 @@
         {
             var deletePopup = document.getElementById("deletePopup");
             deletePopup.style.display = "none";
+        }
+        
+    function startUsers() 
+        {
+            var usersPopup = document.getElementById("usersPopup");
+            usersPopup.style.display = "block";
+        }
+    function cancelUsers()  
+        {
+            var usersPopup = document.getElementById("usersPopup");
+            usersPopup.style.display = "none";
         }
         
     function joinProject() 
