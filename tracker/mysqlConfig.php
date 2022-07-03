@@ -12,7 +12,7 @@
     //Quickly fetches the user using the UID
     function getUserFromID($UID) 
     {
-        $mysqli = new mysqli("127.0.0.1:3308", "root", "", "bugtrakt");
+        $mysqli = new mysqli("ip:port", "user", "pass", "database");
         return $mysqli->query("SELECT * FROM `user` WHERE `UID` = $UID");
     }
     //Fetches the username from an ID useful for UX/UI,
@@ -50,14 +50,14 @@ function getUserEmailFromID($UID)
 //Was used for config pages a lot, now depricated.
 function getUserAdminProjects($UID) 
     {
-        $mysqli = new mysqli("127.0.0.1:3308", "root", "", "bugtrakt");
+        $mysqli = new mysqli("ip:port", "user", "pass", "database");
         $query = $mysqli->query("SELECT * FROM `user-project` WHERE `UID` = $UID AND `rank` >= 2");
         return $query->fetch_all(MYSQLI_ASSOC);
     }
 //Gets a project name, mainly for UI
 function getProjectName($PID) 
     {
-        $mysqli = new mysqli("127.0.0.1:3308", "root", "", "bugtrakt");
+        $mysqli = new mysqli("ip:port", "user", "pass", "database");
         $query = $mysqli->query("SELECT * FROM `projects` WHERE `ID` = $PID");
         if ($query->num_rows >= 1) 
         {
@@ -69,7 +69,7 @@ function getProjectName($PID)
 //Gets an associative array of all users in a project
 function getProjectUsers($PID) 
     {
-        $mysqli = new mysqli("127.0.0.1:3308", "root", "", "bugtrakt");
+        $mysqli = new mysqli("ip:port", "user", "pass", "database");
         $query = $mysqli->query("SELECT * FROM `user-project` WHERE `PID` =  $PID");
         if ($query->num_rows >= 1) 
         {
